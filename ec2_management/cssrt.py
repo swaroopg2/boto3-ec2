@@ -82,8 +82,71 @@ def create_ec2_instances(region='us-west-2', root_vol_size=20, lvm_vol_size=50, 
     return response
 
 
-#Uncomment to create an EC2 node with provided config details
-#Check your configs in variables.ini
+def start_ec2_instances(instance_ids=[], region='us-west-2'):
+    stopped_instances_ids = []
+    for item in describe_instance_status(instance_ids, region)['InstanceStatuses']:
+        state = item['InstanceState']['Name']
+        instance = item['InstanceId']
+        code = item['InstanceState']['Code']
+        if str(state) == 'running' and int(code) == 16:
+            print(f"Instance {instance} is in {state} state.")
+        else:
+            stopped_instances_ids.append(instance)
+
+    if len(stopped_instances_ids) > 0:
+        client = boto3.client("ec2", region_name=region)
+        response = client.start_instances(
+            InstanceIds=stopped_instances_ids
+        )
+        return response
+
+
+def stop_ec2_instances(instance_ids=[], region='us-west-2'):
+    running_instances_ids = []
+    for item in describe_instance_status(instance_ids, region)['InstanceStatuses']:
+        state = item['InstanceState']['Name']
+        instance = item['InstanceId']
+        code = item['InstanceState']['Code']
+        if str(state) == 'stopped' and int(code) == 80:
+            print(f"Instance {instance} is in {state} state.")
+        else:
+            running_instances_ids.append(instance)
+
+    if len(running_instances_ids) > 0:
+        client = boto3.client("ec2", region_name=region)
+        response = client.stop_instances(
+            InstanceIds=running_instances_ids
+        )
+        return response
+
+
+def reboot_ec2_instances(instance_ids=[], region='us-west-2'):
+    client = boto3.client("ec2", region_name=region)
+    response = client.reboot_instances(
+        InstanceIds=instance_ids
+    )
+    return response
+
+
+def terminate_ec2_instances(instance_ids=[], region='us-west-2'):
+    client = boto3.client("ec2", region_name=region)
+    response = client.terminate_instances(
+        InstanceIds=instance_ids
+    )
+    return response
+
+
+def describe_instance_status(instance_ids=[], region='us-west-2'):
+    client = boto3.client("ec2", region_name=region)
+    response = client.describe_instance_status(
+        InstanceIds=instance_ids,
+        IncludeAllInstances=True
+    )
+    return response
+
+
+# Uncomment to create an EC2 node with provided config details
+# Check your configs in variables.ini
 # pprint(create_ec2_instances(region='us-west-1',
 #                             root_vol_size=30,
 #                             lvm_vol_size=20,
@@ -92,3 +155,4 @@ def create_ec2_instances(region='us-west-2', root_vol_size=20, lvm_vol_size=50, 
 #                             name='NEW',
 #                             instance_type='t2.medium',
 #                             iam_arn='arn:aws:iam::xxxxxxxxx:instance-profile/xxxxxxx'))
+
