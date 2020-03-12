@@ -4,7 +4,7 @@
 
 #### Description
 
-Launch and manage ec2 compute services using python-boto3 sdk.
+Launch ,start ,stop ,reboot and terminate ec2 instances using python-boto3 sdk.
 
 #### Initial setup
 
@@ -14,10 +14,10 @@ aws sdk configured with IAM role with EC2 full access policy.
 
 #### Usage
 
-To use ec2_management package in your python scripts. Returns dictionary.
+Returns dictionary.
 
 ```
-from ec2_management.create_ec2 import create_ec2_instances
+from ec2_management.cssrt import create_ec2_instances
 
 pprint(create_ec2_instances(region='us-west-1',
                             root_vol_size=30,
