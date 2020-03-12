@@ -10,10 +10,8 @@ import boto3
 import pprint
 import configparser
 
-'''
-To avoid abuse of AWS resources ValueError is raised when no_of_instances exceeds more than 10
-Check your limit settings in AWS and change accordingly.
-'''
+# To avoid abuse of AWS resources ValueError is raised when no_of_instances exceeds more than 10
+# Check your limit settings in AWS and change accordingly.
 
 
 def create_ec2_instances(region='us-west-2', root_vol_size=20, lvm_vol_size=50, tmp_vol_size=10,
